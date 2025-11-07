@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+
+      <link rel="icon" type="image/png" href="study.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --bg-color-light: #f0f4f8;
+            --text-color-light: #1e293b;
+            --card-bg-light: #ffffff;
+            --border-color-light: #e2e8f0;
+            --primary-color: #000000;
+            --primary-hover-color: #357bd8;
+            --error-color: #ef4444;
+            --header-bg-light: #000000;
+            --secondary-color: #64748b;
+            --accent-color: #2563eb;
+            --button-view: #3b82f6;
+            --button-edit: #f59e0b;
+            --button-delete: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fffaf5;
+            /* background-image: url(gen3.png); */
+            background-size: 100%;
+            color: var(--text-color-light);
+            transition: background-color 0.4s, color 0.4s;
+            min-height: 100vh;
+        }
+
+          body::before {
+            content: '';
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('imggen1.png'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.7; 
+            z-index: -1; 
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        .dark-mode {
+            --bg-color-light: #1a202c;
+            --text-color-light: #f8fafc;
+            --card-bg-light: #2d3748;
+            --border-color-light: #4a5568;
+            --primary-color: #4a90e2;
+            --primary-hover-color: #357bd8;
+            --error-color: #fca5a5;
+            --header-bg-light: #2d3748;
+            --secondary-color: #a0aec0;
+            --accent-color: #6366f1;
+            --button-view: #3b82f6;
+            --button-edit: #f59e0b;
+            --button-delete: #ef4444;
+        }
+
+        .navbar {
+            background-color: var(--header-bg-light);
+            padding: 1rem 12rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 1px solid var(--border-color-light);
+            transition: background-color 0.4s;
+        }
+
+        .navbar .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .navbar-links a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: var(--border-color-light);
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .navbar-links a.active {
+            color: #6366f1;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .navbar-links a:hover {
+            color: #f59e0b;
+        }
+
+        #theme-toggle {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-left: 2rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+        
+        #theme-toggle:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 2.5rem auto;
+            padding: 1rem;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.171);
+            border-radius: 12px;
+            backdrop-filter: blur(50px);
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgb(218, 194, 184);
+            border: 1px solid var(--border-color-light);
+            transition: background-color 0.4s;
+            
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h1 {
+            margin: 0;
+            font-size: 3rem;
+            color: #000000;
+            text-shadow: 0 0 20px #ffffff;
+        }
+
+        .form-header p {
+            margin-top: 0.5rem;
+            color:#eee;
+            font-weight: 100;
+            font-size: 1.3rem;
+        }
+        
+        .form-section {
+            margin-bottom: 3rem;
+        }
+
+        .form-section h3 {
+            font-size: 2.7rem;
+            color:#000000;
+            border-bottom: 2px solid var(--border-color-light);
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .form-section-icon {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .form-section.expanded .form-section-icon {
+            transform: rotate(90deg);
+        }
+
+        .form-section-content {
+            display: none;
+            padding-top: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 1.5rem;
+            color: var(--text-color-light);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: #fff1e648;
+            color: var(--text-color-light);
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .form-group input,
+        .dark-mode .form-group select,
+        .dark-mode .form-group textarea {
+             background-color: #1a202c;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 10px 0px rgba(212, 148, 105, 0.3);
+        }
+        
+        .form-group input.invalid,
+        .form-group select.invalid,
+        .form-group textarea.invalid {
+            border-color: var(--error-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+        
+        .form-group-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .subject-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .subject-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-bottom: 0;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .subject-group input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer;
+        }
+        
+        .photo-upload-area {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .photo-preview {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: rgba(0,0,0,0.05);
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .photo-preview:hover {
+            transform: scale(1.05);
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 86, 179, 0.3);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        
+        /* Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* View Data styles */
+        .view-section {
+            display: none;
+        }
+
+        .login-card {
+            background-color: var(--card-bg-light);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 400px;
+            margin: 2.5rem auto;
+            text-align: center;
+            border: 1px solid var(--border-color-light);
+        }
+
+        .login-card h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .login-form input[type="password"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background-color: transparent;
+            color: var(--text-color-light);
+        }
+        
+        .dark-mode .login-form input[type="password"] {
+            background-color: #1a202c;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .login-form button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            background-color: var(--card-bg-light);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color-light);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 800px;
+            transition: background-color 0.4s;
+        }
+        
+        .dark-mode .search-bar {
+            background-color: #2d3748;
+        }
+
+        .search-bar select, .search-bar input {
+            padding: 0.8rem;
+            border: 1px solid var(--border-color-light);
+            border-radius: 8px;
+            flex-grow: 1;
+            background-color: transparent;
+            color: var(--text-color-light);
+            transition: background-color 0.4s;
+        }
+
+        .dark-mode .search-bar select,
+        .dark-mode .search-bar input {
+            background-color: #1a202c;
+        }
+        
+        .search-bar button {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .search-bar button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+        
+        .export-btn {
+            background-color: var(--button-view);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .export-btn:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background-color: var(--card-bg-light);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color-light);
+            margin-top: 2rem;
+            transition: background-color 0.4s;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .students-table th, .students-table td {
+            text-align: left;
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--border-color-light);
+            color: var(--text-color-light);
+        }
+
+        .students-table th {
+            background-color: #f59e0b;
+            font-weight: 600;
+            color: var(--primary-color);
+            transition: background-color 0.4s;
+        }
+
+        .students-table tbody tr{
+             transition: background-color 0.4s;
+        }
+
+
+        .students-table tbody tr:hover {
+            background-color: #fff2e2;
+            cursor: pointer;
+        }
+        
+        .students-table tbody tr.no-data:hover {
+            background-color: transparent;
+            cursor: default;
+        }
+
+        .action-btn {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .view-btn { background-color: var(--button-view); }
+        .edit-btn { background-color: var(--button-edit); }
+        .delete-btn { background-color: var(--button-delete); }
+        
+        .view-btn:hover { background-color: #3b82f6e6; }
+        .edit-btn:hover { background-color: #f59e0be6; }
+        .delete-btn:hover { background-color: #ef4444e6; }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg-light);
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color-light);
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px) scale(0.9); }
+            to { transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            font-weight: 200;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* --- New styles for Print Optimization (Display View) --- */
+        .modal-print-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr 100px; /* Two data columns + one photo column */
+            gap: 1.5rem;
+        }
+        
+        .modal-print-photo-container {
+            grid-column: 3 / 4; /* Place photo in the third column */
+            grid-row: 1 / 2; /* Position at the top */
+            text-align: center;
+        }
+        
+        .details-list-container {
+            grid-column: 1 / 3; /* Data columns span 1st and 2nd grid columns */
+        }
+        
+        .modal-details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* Container for 3-column data rows inside table body */
+        .details-data-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Divides the two data columns into 3 sections for pairs */
+            gap: 0 1rem;
+        }
+        
+        /* Style for each table row/data pair */
+        .modal-details-table tr {
+            display: contents; /* Allows th/td to flow into the grid */
+        }
+        
+        .modal-details-table th, .modal-details-table td {
+            text-align: left;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-color-light);
+            color: var(--text-color-light);
+        }
+        
+        .modal-details-table th {
+            width: 50%; /* Label width within its column pair */
+            font-weight: 500;
+            color: var(--primary-color);
+            padding-right: 10px;
+            white-space: nowrap;
+        }
+        
+        .modal-details-table td {
+             font-weight: 400;
+             word-wrap: break-word;
+        }
+
+        .modal-photo {
+            width: 80px; /* Reduced photo size for compact view */
+            height: 80px;
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        
+        /* Full-width fields (Address, Subjects) should span all 3 grid columns */
+        .full-width-row th, .full-width-row td {
+            grid-column: 1 / 4; 
+        }
+        .full-width-row td {
+             padding-bottom: 1rem;
+        }
+
+
+        @media (max-width: 768px) {
+            /* Existing mobile media queries remain... */
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                display: none;
+            }
+
+            .navbar-links {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-around;
+                display: flex;
+            }
+            .search-bar {
+                flex-direction: column;
+            }
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+
+            .form-section h3{
+                font-size: 1.5rem;
+            }
+            
+            /* Stack layout on mobile */
+            .modal-print-layout {
+                grid-template-columns: 1fr;
+            }
+            .modal-print-photo-container {
+                grid-column: 1 / 2; 
+                grid-row: 1 / 2;
+                order: -1; 
+            }
+            .details-list-container {
+                grid-column: 1 / 2;
+            }
+            .details-data-container {
+                grid-template-columns: 1fr; /* Single column flow for table on mobile */
+            }
+            .full-width-row th, .full-width-row td {
+                grid-column: 1 / 2; 
+            }
+        }
+
+        /* --- Print Styles: Enforce 3-column layout and remove scroll --- */
+        @media print {
+            body {
+                background: none;
+                /* Crucial change: Hide the body's contents by default, and only show what's inside the modal */
+                visibility: hidden;
+            }
+            
+            /* Show ONLY the modal when printing */
+            #detailsModal {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                background: none !important;
+                display: block !important;
+                visibility: visible !important;
+            }
+            
+            .modal-content {
+                box-shadow: none !important;
+                border: none !important;
+                max-height: none !important;
+                overflow: visible !important; 
+                width: 100% !important;
+                padding: 0;
+            }
+            
+            /* HIDE all UI elements (navbar, buttons, close icons, footer print button) */
+            .navbar, #main-content, #message-box, 
+            .modal-close, .modal-content > div:last-child {
+                display: none !important;
+            }
+            
+            /* Print Specific Grid: 2 data columns + photo column */
+            .modal-print-layout {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr 100px !important;
+                gap: 0.5rem 1rem !important; 
+            }
+
+            .modal-print-photo-container {
+                grid-column: 3 / 4 !important;
+                grid-row: 1 / 3 !important; 
+                order: 0;
+            }
+            
+            .modal-header {
+                border-bottom: 2px solid #000 !important;
+                margin-bottom: 1rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+            .modal-header h2 {
+                color: #000 !important;
+                font-size: 1.5rem !important;
+            }
+
+            /* Force data to flow across two main columns */
+            .details-list-container {
+                grid-column: 1 / 3 !important;
+            }
+            
+            .details-data-container {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* Force content to 2 columns for data rows */
+                gap: 0 2rem !important;
+            }
+            
+            .modal-details-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .modal-details-table tbody {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* Main content area grid */
+                gap: 0 2rem;
+            }
+            
+            .modal-details-table tr {
+                display: contents;
+            }
+            
+            .modal-details-table th, .modal-details-table td {
+                display: block;
+                border-bottom: 1px solid #ccc;
+                padding: 0.2rem 0 !important;
+            }
+            
+            .modal-details-table th {
+                font-weight: 600;
+                color: #000;
+                width: 100% !important;
+            }
+            
+            .modal-details-table td {
+                padding-bottom: 0.5rem !important;
+                border-bottom: none;
+                
+            }
+            
+            .full-width-row th, .full-width-row td {
+                grid-column: 1 / 3 !important; /* Full width fields span both data columns */
+                display: block !important;
+            }
+
+            .modal-photo {
+                width: 80px !important;
+                height: 80px !important;
+                border: 1px solid #000;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">D.R. Student Data <br> <span style="color: #eee; font-size: 18px;">(Concept By Physics Department / Developed By Tanmay) </span></div>
+
+    <div class="navbar-links">
+        <a href="#application-form-section" id="application-link" class="active">New Application</a>
+        <a href="#view-data-section" id="view-link">View Data</a>
+    </div>
+    <span id="theme-toggle">🌙</span>
+</nav>
+
+<div class="container" id="main-content">
+    
+    <div id="message-box"></div>
+
+    <!-- New Application Form Section -->
+    <section id="application-form-section" class="active-section">
+        <div class="card">
+            <div class="form-header">
+                <h1>Student Registration Application</h1>
+                <p>Application ID: <strong id="app-id-display"></strong></p>
+                <!-- <p>Please fill out the form below to register.</p> -->
+            </div>
+            <form id="registration-form">
+                <input type="hidden" id="app_id" name="app_id">
+                
+                <div class="form-section expanded" data-section="personal">
+                    <h3>Personal Information (As per LC)<span class="form-section-icon">▶</span></h3>
+                    <div class="form-section-content">
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="surname">Surname <span class="required">*</span></label>
+                                <input type="text" id="surname" name="surname" required>
+                                <div class="error-message">Surname is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="full-name">Name <span class="required">*</span></label>
+                                <input type="text" id="full-name" name="full_name" required>
+                                <div class="error-message">Name is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="fathers-name">Father's Name <span class="required">*</span></label>
+                                <input type="text" id="fathers-name" name="fathers_name" required>
+                                <div class="error-message">Father's Name is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="mothers-name">Mother's Name <span class="required">*</span></label>
+                                <input type="text" id="mothers-name" name="mothers_name" required>
+                                <div class="error-message">Mother's Name is required.</div>
+                            </div>
+                        </div>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="dob">Date of Birth <span class="required">*</span></label>
+                                <input type="date" id="dob" name="dob" required>
+                                <div class="error-message">Date of Birth is required.</div>
+                            </div>
+                            <!-- Age field, read-only and calculated by JS -->
+                             <div class="form-group">
+                                <label for="age">Age (as of 15-June-2025)</label>
+                                <input type="text" id="age" name="age" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender <span class="required">*</span></label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <div class="error-message">Gender is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="handicap-status">Handicap Status <span class="required">*</span></label>
+                                <select id="handicap-status" name="handicap_status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="No Handicap">No Handicap</option>
+                                    <option value="Handicap">Handicap</option>
+                                </select>
+                                <div class="error-message">Handicap status is required.</div>
+                            </div>
+                             <!-- Conditional Handicap Percentage Field -->
+                             <div class="form-group" id="handicap-percentage-group" style="display:none;">
+                                <label for="handicap-percentage">Handicap Percentage (1-100) <span class="required">*</span></label>
+                                <input type="number" id="handicap-percentage" name="handicap_percentage" min="1" max="100">
+                                <div class="error-message">Handicap percentage is required (1-100).</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="blood-group">Blood Group</label>
+                                <input type="text" id="blood-group" name="blood_group">
+                            </div>
+                            <div class="form-group">
+                                <label for="weight">Weight (kg)</label>
+                                <input type="number" id="weight" name="weight">
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (cm)</label>
+                                <input type="number" id="height" name="height">
+                            </div>
+                        </div>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="fathers-occupation">Father's Occupation</label>
+                                <input type="text" id="fathers-occupation" name="fathers_occupation">
+                            </div>
+                            <div class="form-group">
+                                <label for="mothers-occupation">Mother's Occupation</label>
+                                <input type="text" id="mothers-occupation" name="mothers_occupation">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" data-section="academic">
+                    <h3>Academic Information <span class="form-section-icon">▶</span></h3>
+                    <div class="form-section-content">
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="class">Class <span class="required">*</span></label>
+                                <select id="class" name="class" required>
+                                    <option value="">Select Class</option>
+                                    <option value="11th">11th</option>
+                                    <option value="12th">12th</option>
+                                </select>
+                                <div class="error-message">Class is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="div">Division <span class="required">*</span></label>
+                                <select id="div" name="div" required>
+                                    <option value="">Select Division</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                </select>
+                                <div class="error-message">Division is required.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="board">Board <span class="required">*</span></label>
+                                <select id="board" name="board" required>
+                                    <option value="">Select Board</option>
+                                    <option value="CBSE">CBSE</option>
+                                    <option value="SSC">SSC</option>
+                                </select>
+                                <div class="error-message">Board is required.</div>
+                            </div>
+                        </div>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="reg-number">Registration Number</label>
+                                <input type="text" id="reg-number" name="reg_number">
+                            </div>
+                            <!-- New PEN and SARAL IDs -->
+                             <div class="form-group">
+                                <label for="pen-number">PEN Number</label>
+                                <input type="text" id="pen-number" name="pen_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="saral-id">SARAL ID (Student ID)</label>
+                                <input type="text" id="saral-id" name="saral_id">
+                            </div>
+                             <div class="form-group">
+                                <label for="grade-10-percentage">10th Grade Percentage (%)</label>
+                                <input type="number" id="grade-10-percentage" name="grade_10_percentage">
+                            </div>
+                        </div>
+                         <div class="form-group-grid">
+                            <div class="form-group">
+                                <label>Subject Language</label>
+                                <select id="subject-language" name="subject_language">
+                                    <option value="">Select Language</option>
+                                    <option value="Marathi">Marathi</option>
+                                    <option value="Hindi">Hindi</option>
+                                    <option value="IT">IT</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="geography-medium-group" style="display:none;">
+                                <label for="geography-medium">Geography Medium <span class="required">*</span></label>
+                                <select id="geography-medium" name="geography_medium">
+                                    <option value="">Select Medium</option>
+                                    <option value="In English">In English</option>
+                                    <option value="In Marathi">In Marathi</option>
+                                </select>
+                                <div class="error-message">Geography Medium is required.</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Subjects (Choose any two) <span class="required">*</span></label>
+                            <div class="subject-group">
+                                <label><input type="checkbox" name="subjects" value="Biology" id="subject-biology"> Biology</label>
+                                <label><input type="checkbox" name="subjects" value="Mathematics" id="subject-mathematics"> Mathematics</label>
+                                <label><input type="checkbox" name="subjects" value="Geography" id="subject-geography"> Geography</label>
+                            </div>
+                            <div class="error-message" id="subjects-error">Please select exactly two subjects.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" data-section="contact">
+                    <h3>Contact and Identification <span class="form-section-icon">▶</span></h3>
+                    <div class="form-section-content">
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="phone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="phone" name="phone" required>
+                                <div class="error-message">Phone number must be exactly 10 digits.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="aadhaar">Aadhaar Number <span class="required">*</span></label>
+                                <input type="text" id="aadhaar" name="aadhaar" required>
+                                <div class="error-message">Aadhaar number must be exactly 12 digits.</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email Address <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" required>
+                                <div class="error-message">A valid Email Address is required.</div>
+                            </div>
+                        </div>
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="board-reg-number">Board Registration Number</label>
+                                <input type="text" id="board-reg-number" name="board_reg_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="roll-number">Roll Number</label>
+                                <input type="text" id="roll-number" name="roll_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="center-code">Center Code</label>
+                                <input type="text" id="center-code" name="center_code">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Full Address <span class="required">*</span></label>
+                            <textarea id="address" name="address" required></textarea>
+                            <div class="error-message">Full Address is required.</div>
+                        </div>
+                         <!-- Up-Down Details Field -->
+                        <div class="form-group-grid">
+                             <div class="form-group">
+                                <label for="updown-status">Up-Down Status</label>
+                                <select id="updown-status" name="updown_status">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                             <div class="form-group" id="updown-address-group" style="display:none;">
+                                <label for="updown-address">Up-Down Address</label>
+                                <textarea id="updown-address" name="updown_address"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" data-section="ration-bank">
+                    <h3>Ration and Bank Details <span class="form-section-icon">▶</span></h3>
+                    <div class="form-section-content">
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="ration-card">Ration Card Type</label>
+                                <select id="ration-card" name="ration_card">
+                                    <option value="">Select Type</option>
+                                    <option value="Yellow">Yellow</option>
+                                    <option value="White">White</option>
+                                    <option value="Orange">Orange</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="account-holder">Account Holder</label>
+                                <select id="account-holder" name="account_holder">
+                                    <option value="">Select Holder</option>
+                                    <option value="Own">Own</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="account-number">Account Number</label>
+                                <input type="text" id="account-number" name="account_number">
+                            </div>
+                            <div class="form-group">
+                                <label for="ifsc-code">IFSC Code</label>
+                                <input type="text" id="ifsc-code" name="ifsc_code">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" data-section="other">
+                    <h3>Other Details <span class="form-section-icon">▶</span></h3>
+                    <div class="form-section-content">
+                        <div class="form-group-grid">
+                            <div class="form-group">
+                                <label for="caste">Caste</label>
+                                <select id="caste" name="caste">
+                                    <option value="">Select Caste Category</option>
+                                    <option value="Open">Open</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="NT-A">NT-A</option>
+                                    <option value="NT-B">NT-B</option>
+                                    <option value="NT-C">NT-C</option>
+                                    <option value="NT-D">NT-D</option>
+                                    <option value="SBC">SBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="religion">Religion</label>
+                                <select id="religion" name="religion">
+                                    <option value="">Select Religion</option>
+                                    <option value="Hindu">Hindu</option>
+                                    <option value="Muslim">Muslim</option>
+                                    <option value="Christian">Christian</option>
+                                    <option value="Sikh">Sikh</option>
+                                    <option value="Buddhist">Buddhist</option>
+                                    <option value="Jain">Jain</option>
+                                    <option value="Parsi">Parsi</option>
+                                    <option value="Jew">Jew</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="photo">Upload Photo (JPG/PNG only) <span class="required">*</span></label>
+                    <div class="photo-upload-area">
+                        <input type="file" id="photo" name="photo" accept="image/jpeg,image/png" required>
+                        <img id="photo-preview" src="" alt="Photo Preview" class="photo-preview" style="display: none;">
+                    </div>
+                    <div class="error-message">Photo is required.</div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span id="submit-text">Submit Application</span>
+                    <div id="submit-spinner" class="spinner" style="display:none;"></div>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- View Data Section -->
+    <section id="view-data-section" class="view-section">
+        <div class="login-card" id="login-card">
+            <h2>Admin Login</h2>
+            <form id="login-form" class="login-form">
+                <input type="password" id="admin-password" placeholder="Enter Admin Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p id="login-error" style="color:red; display: none;">Incorrect password.</p>
+        </div>
+
+        <div id="data-view-content" style="display: none;">
+            <div class="header">
+                <h1>Student Records</h1>
+                <div style="display: flex; gap: 10px;">
+                    <a id="export-xls-btn" href="#" class="export-btn" style="background-color: var(--button-edit);">Export as XLS</a>
+                    <a id="export-pdf-btn" href="#" class="export-btn" style="background-color: var(--button-delete);">Export PDF</a>
+                </div>
+            </div>
+            <form id="search-form" class="search-bar">
+                <select id="search-field" name="field">
+                    <option value="full_name">Name</option>
+                    <option value="phone">Phone Number</option>
+                    <option value="aadhaar">Aadhaar Number</option>
+                </select>
+                <input type="search" id="search-query" placeholder="Search...">
+                <button type="submit">Search</button>
+            </form>
+            <br>
+            <div class="table-container">
+                <table class="students-table" id="students-table">
+                    <thead>
+                        <tr>
+                            <th>Application ID</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Division</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="students-table-body">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- The Modal for full details -->
+<div id="detailsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title">Student Details</h2>
+            <span class="modal-close" data-modal="detailsModal">&times;</span>
+        </div>
+        <div id="modal-body">
+            <!-- New Print Layout Container -->
+            <div class="modal-print-layout">
+                <!-- Photo Container (Top Right) -->
+                <div class="modal-print-photo-container">
+                    <img id="modal-photo" src="" alt="Student Photo" class="modal-photo">
+                </div>
+                
+                <!-- Data List Container (Spanning two rows of grid) -->
+                <div class="details-list-container">
+                    <!-- Table holds the structure, but TRs/TDs use CSS Grid for layout -->
+                    <table class="modal-details-table">
+                        <tbody class="details-data-container">
+                            <tr><th>Application ID</th><td id="modal-app-id"></td></tr>
+                            <tr><th>Surname</th><td id="modal-surname"></td></tr>
+                            <tr><th>Name</th><td id="modal-full-name"></td></tr>
+                            <tr><th>Father's Name</th><td id="modal-fathers-name"></td></tr>
+                            <tr><th>Mother's Name</th><td id="modal-mothers-name"></td></tr>
+                            <tr><th>Date of Birth</th><td id="modal-dob"></td></tr>
+                            <tr><th>Age</th><td id="modal-age"></td></tr>
+                            <tr><th>Gender</th><td id="modal-gender"></td></tr>
+                            <tr><th>Handicap Status</th><td id="modal-handicap-status"></td></tr>
+                            <tr><th>Handicap %</th><td id="modal-handicap-percentage"></td></tr>
+                            <tr><th>Blood Group</th><td id="modal-blood-group"></td></tr>
+                            <tr><th>Weight (kg)</th><td id="modal-weight"></td></tr>
+                            <tr><th>Height (cm)</th><td id="modal-height"></td></tr>
+                            <tr><th>Father's Occupation</th><td id="modal-fathers-occupation"></td></tr>
+                            <tr><th>Mother's Occupation</th><td id="modal-mothers-occupation"></td></tr>
+                            
+                            <tr><th>Class</th><td id="modal-class"></td></tr>
+                            <tr><th>Division</th><td id="modal-div"></td></tr>
+                            <tr><th>Board</th><td id="modal-board"></td></tr>
+                            <tr><th>10th Grd %</th><td id="modal-grade-10-percentage"></td></tr>
+                            <tr><th>Reg Number</th><td id="modal-reg-number"></td></tr>
+                            <tr><th>PEN Number</th><td id="modal-pen-number"></td></tr>
+                            <tr><th>SARAL ID</th><td id="modal-saral-id"></td></tr>
+                            <tr><th>Subject Lang</th><td id="modal-subject-language"></td></tr>
+                            <tr><th>Subjects</th><td id="modal-subjects"></td></tr>
+                            <tr><th>Geo Medium</th><td id="modal-geography-medium"></td></tr>
+                            
+                            <tr><th>Phone Number</th><td id="modal-phone"></td></tr>
+                            <tr><th>Aadhaar Number</th><td id="modal-aadhaar"></td></tr>
+                            <tr><th>Email Address</th><td id="modal-email"></td></tr>
+                            <tr><th>Board Reg Num</th><td id="modal-board-reg-number"></td></tr>
+                            <tr><th>Roll Number</th><td id="modal-roll-number"></td></tr>
+                            <tr><th>Center Code</th><td id="modal-center-code"></td></tr>
+                            
+                            <tr><th>Caste</th><td id="modal-caste"></td></tr>
+                            <tr><th>Religion</th><td id="modal-religion"></td></tr>
+                            <tr><th>Ration Card Type</th><td id="modal-ration-card"></td></tr>
+                            <tr><th>Account Holder</th><td id="modal-account-holder"></td></tr>
+                            <tr><th>Account Number</th><td id="modal-account-number"></td></tr>
+                            <tr><th>IFSC Code</th><td id="modal-ifsc-code"></td></tr>
+
+                            <!-- Full Width Fields for Address -->
+                            <tr class="full-width-row"><th>Full Address</th><td id="modal-address"></td></tr>
+                            <tr class="full-width-row"><th>Up-Down Status</th><td id="modal-updown-status"></td></tr>
+                            <tr class="full-width-row"><th>Up-Down Address</th><td id="modal-updown-address"></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 1.5rem;">
+             <button onclick="window.print()" class="submit-btn" style="width: auto;">Print this Page</button>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal for editing a record -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Student Details</h2>
+            <span class="modal-close" data-modal="editModal">&times;</span>
+        </div>
+        <form id="edit-form">
+            <input type="hidden" id="edit-app-id" name="app_id">
+            
+            <div class="form-section">
+                <h3>Personal Information <span class="form-section-icon">▶</span></h3>
+                <div class="form-section-content">
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-surname">Surname</label>
+                            <input type="text" id="edit-surname" name="surname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-full-name">Name</label>
+                            <input type="text" id="edit-full-name" name="full_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-fathers-name">Father's Name</label>
+                            <input type="text" id="edit-fathers-name" name="fathers_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-mothers-name">Mother's Name</label>
+                            <input type="text" id="edit-mothers-name" name="mothers_name" required>
+                        </div>
+                    </div>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-dob">Date of Birth</label>
+                            <input type="date" id="edit-dob" name="dob" required>
+                        </div>
+                        <!-- Read-only Age field -->
+                        <div class="form-group">
+                            <label for="edit-age">Age (as of 15-June-2025)</label>
+                            <input type="text" id="edit-age" name="age" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-gender">Gender</label>
+                            <select id="edit-gender" name="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-handicap-status">Handicap Status</label>
+                            <select id="edit-handicap-status" name="handicap_status" required>
+                                <option value="">Select Status</option>
+                                <option value="No Handicap">No Handicap</option>
+                                <option value="Handicap">Handicap</option>
+                            </select>
+                        </div>
+                        <!-- Conditional Handicap Percentage Field -->
+                        <div class="form-group" id="edit-handicap-percentage-group" style="display:none;">
+                            <label for="edit-handicap-percentage">Handicap Percentage (1-100) <span class="required">*</span></label>
+                            <input type="number" id="edit-handicap-percentage" name="handicap_percentage" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-blood-group">Blood Group</label>
+                            <input type="text" id="edit-blood-group" name="blood_group">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-weight">Weight (kg)</label>
+                            <input type="number" id="edit-weight" name="weight">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-height">Height (cm)</label>
+                            <input type="number" id="edit-height" name="height">
+                        </div>
+                    </div>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-fathers-occupation">Father's Occupation</label>
+                            <input type="text" id="edit-fathers-occupation" name="fathers_occupation">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-mothers-occupation">Mother's Occupation</label>
+                            <input type="text" id="edit-mothers-occupation" name="mothers_occupation">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Academic Information <span class="form-section-icon">▶</span></h3>
+                <div class="form-section-content">
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-class">Class</label>
+                            <select id="edit-class" name="class" required>
+                                <option value="">Select Class</option>
+                                <option value="11th">11th</option>
+                                <option value="12th">12th</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-div">Division</label>
+                            <select id="edit-div" name="div" required>
+                                <option value="">Select Division</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-board">Board</label>
+                            <select id="edit-board" name="board" required>
+                                <option value="">Select Board</option>
+                                <option value="CBSE">CBSE</option>
+                                <option value="SSC">SSC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group-grid">
+                         <div class="form-group">
+                            <label for="edit-grade-10-percentage">10th Grade Percentage (%)</label>
+                            <input type="number" id="edit-grade-10-percentage" name="grade_10_percentage">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-reg-number">Registration Number</label>
+                            <input type="text" id="edit-reg-number" name="reg_number">
+                        </div>
+                         <div class="form-group">
+                            <label for="edit-pen-number">PEN Number</label>
+                            <input type="text" id="edit-pen-number" name="pen_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-saral-id">SARAL ID (Student ID)</label>
+                            <input type="text" id="edit-saral-id" name="saral_id">
+                        </div>
+                    </div>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-subject-language">Subject Language</label>
+                            <select id="edit-subject-language" name="subject_language">
+                                <option value="">Select Language</option>
+                                <option value="Marathi">Marathi</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="IT">IT</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="edit-geography-medium-group" style="display:none;">
+                            <label for="edit-geography-medium">Geography Medium</label>
+                            <select id="edit-geography-medium" name="geography_medium">
+                                <option value="">Select Medium</option>
+                                <option value="In English">In English</option>
+                                <option value="In Marathi">In Marathi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Subjects (Choose any two)</label>
+                        <div class="subject-group" id="edit-subjects-group">
+                            <label><input type="checkbox" name="subjects" value="Biology" id="edit-subject-biology"> Biology</label>
+                            <label><input type="checkbox" name="subjects" value="Mathematics" id="edit-subject-mathematics"> Mathematics</label>
+                            <label><input type="checkbox" name="subjects" value="Geography" id="edit-subject-geography"> Geography</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Contact and Identification <span class="form-section-icon">▶</span></h3>
+                <div class="form-section-content">
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-phone">Phone Number</label>
+                            <input type="tel" id="edit-phone" name="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-aadhaar">Aadhaar Number</label>
+                            <input type="text" id="edit-aadhaar" name="aadhaar" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Email Address</label>
+                            <input type="email" id="edit-email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-board-reg-number">Board Registration Number</label>
+                            <input type="text" id="edit-board-reg-number" name="board_reg_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-roll-number">Roll Number</label>
+                            <input type="text" id="edit-roll-number" name="roll_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-center-code">Center Code</label>
+                            <input type="text" id="edit-center-code" name="center_code">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-address">Full Address</label>
+                        <textarea id="edit-address" name="address" required></textarea>
+                    </div>
+                     <!-- Up-Down Details Field (Edit Modal) -->
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-updown-status">Up-Down Status</label>
+                            <select id="edit-updown-status" name="updown_status">
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="edit-updown-address-group" style="display:none;">
+                            <label for="edit-updown-address">Up-Down Address</label>
+                            <textarea id="edit-updown-address" name="updown_address"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Ration and Bank Details <span class="form-section-icon">▶</span></h3>
+                <div class="form-section-content">
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-ration-card">Ration Card Type</label>
+                            <select id="edit-ration-card" name="ration_card">
+                                <option value="">Select Type</option>
+                                <option value="Yellow">Yellow</option>
+                                <option value="White">White</option>
+                                <option value="Orange">Orange</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-account-holder">Account Holder</label>
+                            <select id="edit-account-holder" name="account_holder">
+                                <option value="">Select Holder</option>
+                                <option value="Own">Own</option>
+                                <option value="Father">Father</option>
+                                <option value="Mother">Mother</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-account-number">Account Number</label>
+                            <input type="text" id="edit-account-number" name="account_number">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-ifsc-code">IFSC Code</label>
+                            <input type="text" id="edit-ifsc-code" name="ifsc_code">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-section">
+                <h3>Other Details <span class="form-section-icon">▶</span></h3>
+                <div class="form-section-content">
+                    <div class="form-group-grid">
+                        <div class="form-group">
+                            <label for="edit-caste">Caste</label>
+                            <select id="edit-caste" name="caste">
+                                <option value="">Select Caste Category</option>
+                                <option value="Open">Open</option>
+                                <option value="OBC">OBC</option>
+                                <option value="NT-A">NT-A</option>
+                                <option value="NT-B">NT-B</option>
+                                <option value="NT-C">NT-C</option>
+                                <option value="NT-D">NT-D</option>
+                                <option value="SBC">SBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-religion">Religion</label>
+                            <select id="edit-religion" name="religion">
+                                <option value="">Select Religion</option>
+                                <option value="Hindu">Hindu</option>
+                                <option value="Muslim">Muslim</option>
+                                <option value="Christian">Christian</option>
+                                <option value="Sikh">Sikh</option>
+                                <option value="Buddhist">Buddhist</option>
+                                <option value="Jain">Jain</option>
+                                <option value="Parsi">Parsi</option>
+                                <option value="Jew">Jew</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-photo">Update Photo</label>
+                <div class="photo-upload-area">
+                    <input type="file" id="edit-photo" name="photo" accept="image/jpeg,image/png">
+                    <img id="edit-photo-preview" src="" alt="Photo Preview" class="photo-preview" style="display: none;">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<!-- The Modal for delete confirmation -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-header">
+            <h2>Confirm Deletion</h2>
+            <span class="modal-close" data-modal="deleteModal">&times;</span>
+        </div>
+        <p>Are you sure you want to delete this record?</p>
+        <div style="display: flex; justify-content: space-around; margin-top: 2rem;">
+            <button id="confirm-delete-btn" class="submit-btn" style="width: 40%; background-color: #ef4444;">Yes, Delete</button>
+            <button id="cancel-delete-btn" class="submit-btn" style="width: 40%; background-color: #64748b;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // Utility function to calculate age based on a reference date
+    function calculateAge(dobString, referenceDate) {
+        if (!dobString) return '';
+        const birthDate = new Date(dobString);
+        const refDate = new Date(referenceDate);
+
+        let age = refDate.getFullYear() - birthDate.getFullYear();
+        const monthDiff = refDate.getMonth() - birthDate.getMonth();
+
+        // Adjust age if the birthday hasn't occurred yet in the reference year
+        if (monthDiff < 0 || (monthDiff === 0 && refDate.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age >= 0 ? age.toString() : 'Invalid DOB';
+    }
+    
+    // --- Google Sheets Integration ---
+    // !!! IMPORTANT: REPLACE THIS PLACEHOLDER URL with the URL from your Apps Script Web App Deployment !!!
+    const GOOGLE_SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    
+    async function sendToGoogleSheet(studentData) {
+        if (GOOGLE_SHEET_URL === 'https://script.google.com/macros/s/AKfycbz15hFtx7UVIw0Sy3FtvIac9loyvV_rMwoG5DDXa-SPX8qmQwNeLma3AsAs4NiWsRBiAw/exec') {
+            console.warn("Google Sheet URL not configured. Data saved locally only.");
+            return;
+        }
+        
+        // Prepare data for the sheet (flatten the object and subjects array)
+        const flatData = {
+            // Add Timestamp and custom format fields first
+            timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+            subjects_list: studentData.subjects ? studentData.subjects.join('; ') : '', 
+            
+            // Core Data
+            app_id: studentData.app_id,
+            surname: studentData.surname,
+            full_name: studentData.full_name,
+            fathers_name: studentData.fathers_name,
+            mothers_name: studentData.mothers_name,
+            dob: studentData.dob,
+            age: studentData.age,
+            gender: studentData.gender,
+            
+            // Conditional/Other Personal
+            handicap_status: studentData.handicap_status,
+            handicap_percentage: studentData.handicap_percentage || '',
+            blood_group: studentData.blood_group,
+            weight: studentData.weight,
+            height: studentData.height,
+            fathers_occupation: studentData.fathers_occupation,
+            mothers_occupation: studentData.mothers_occupation,
+            
+            // Academic
+            class: studentData.class,
+            div: studentData.div,
+            board: studentData.board,
+            grade_10_percentage: studentData.grade_10_percentage,
+            reg_number: studentData.reg_number,
+            pen_number: studentData.pen_number,
+            saral_id: studentData.saral_id,
+            subject_language: studentData.subject_language,
+            geography_medium: studentData.geography_medium || '',
+            
+            // Contact & ID
+            phone: studentData.phone,
+            aadhaar: studentData.aadhaar,
+            email: studentData.email,
+            board_reg_number: studentData.board_reg_number,
+            roll_number: studentData.roll_number,
+            center_code: studentData.center_code,
+            address: studentData.address,
+            
+            // Up-Down
+            updown_status: studentData.updown_status,
+            updown_address: studentData.updown_address || '',
+            
+            // Ration & Bank
+            ration_card: studentData.ration_card,
+            account_holder: studentData.account_holder,
+            account_number: studentData.account_number,
+            ifsc_code: studentData.ifsc_code,
+            
+            // Other
+            caste: studentData.caste,
+            religion: studentData.religion,
+            
+            // NOTE: Photo data is too large for Google Sheets and is excluded.
+        };
+
+        try {
+            const response = await fetch(GOOGLE_SHEET_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Required for Google Apps Script endpoint
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(flatData)
+            });
+            console.log('Data fetch request sent to Google Sheet endpoint.');
+        } catch (error) {
+            console.error('Error sending data to Google Sheet:', error);
+            showMessage("Warning: Data saved locally, but failed to send to Google Sheet.", true);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var adminPassword = 'admin';
+        var APP_ID_PREFIX = 'APP';
+        var REFERENCE_DATE = '2025-06-15'; // June 15, 2025
+        
+        var detailsModal = document.getElementById('detailsModal');
+        var editModal = document.getElementById('editModal');
+        var deleteModal = document.getElementById('deleteModal');
+        var modalCloses = document.querySelectorAll(".modal-close");
+        var applicationFormSection = document.getElementById('application-form-section');
+        var viewDataSection = document.getElementById('view-data-section');
+        var loginCard = document.getElementById('login-card');
+        var dataViewContent = document.getElementById('data-view-content');
+        var navLinks = document.querySelectorAll('.navbar-links a');
+        var students = JSON.parse(localStorage.getItem('students')) || [];
+        var formSections = document.querySelectorAll('.form-section');
+
+        // --- Navigation and Section Toggling ---
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(function(section) {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            
+            navLinks.forEach(function(link) {
+                link.classList.remove('active');
+            });
+            if (sectionId === 'application-form-section') {
+                document.getElementById('application-link').classList.add('active');
+            } else {
+                document.getElementById('view-link').classList.add('active');
+            }
+        }
+        
+        document.getElementById('application-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('application-form-section');
+            generateAppId();
+        });
+
+        document.getElementById('view-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            showSection('view-data-section');
+            if (sessionStorage.getItem('authenticated') === 'true') {
+                loginCard.style.display = 'none';
+                dataViewContent.style.display = 'block';
+                loadAndDisplayStudents();
+            } else {
+                loginCard.style.display = 'block';
+                dataViewContent.style.display = 'none';
+            }
+        });
+
+        // --- Form Accordion Functionality ---
+        formSections.forEach(function(section) {
+            section.querySelector('h3').addEventListener('click', function() {
+                var content = section.querySelector('.form-section-content');
+                var isExpanded = section.classList.toggle('expanded');
+                content.style.display = isExpanded ? 'block' : 'none';
+            });
+            section.querySelector('.form-section-content').style.display = 'none';
+        });
+        document.querySelector('.form-section[data-section="personal"]').classList.add('expanded');
+        document.querySelector('.form-section[data-section="personal"] .form-section-content').style.display = 'block';
+
+
+        // --- Initial App Load ---
+        showSection('application-form-section');
+
+        // --- Admin Login ---
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var password = document.getElementById('admin-password').value;
+            if (password === adminPassword) {
+                sessionStorage.setItem('authenticated', 'true');
+                loginCard.style.display = 'none';
+                dataViewContent.style.display = 'block';
+                loadAndDisplayStudents();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        });
+
+        // --- Conditional Field Logic ---
+        
+        // 1. Up-Down Address Visibility
+        const upDownStatus = document.getElementById('updown-status');
+        const upDownAddressGroup = document.getElementById('updown-address-group');
+        upDownStatus.addEventListener('change', function() {
+            upDownAddressGroup.style.display = this.value === 'Yes' ? 'block' : 'none';
+            document.getElementById('updown-address').required = this.value === 'Yes';
+        });
+        // Initial state
+        upDownAddressGroup.style.display = upDownStatus.value === 'Yes' ? 'block' : 'none';
+        
+        // 2. Handicap Percentage Visibility
+        const handicapStatus = document.getElementById('handicap-status');
+        const handicapPercentageGroup = document.getElementById('handicap-percentage-group');
+        const handicapPercentageInput = document.getElementById('handicap-percentage');
+
+        function updateHandicapPercentageVisibility() {
+            if (handicapStatus.value === 'Handicap') {
+                handicapPercentageGroup.style.display = 'block';
+                handicapPercentageInput.setAttribute('required', 'required');
+            } else {
+                handicapPercentageGroup.style.display = 'none';
+                handicapPercentageInput.removeAttribute('required');
+                handicapPercentageInput.value = ''; // Clear value if hidden
+                handicapPercentageInput.classList.remove('invalid');
+                handicapPercentageInput.nextElementSibling.style.display = 'none';
+            }
+        }
+        handicapStatus.addEventListener('change', updateHandicapPercentageVisibility);
+        updateHandicapPercentageVisibility(); // Initial call
+        
+
+        // 3. Geography Medium Visibility
+        const subjectCheckboxes = document.querySelectorAll('input[name="subjects"]');
+        const geographyMediumGroup = document.getElementById('geography-medium-group');
+        const geographyMediumSelect = document.getElementById('geography-medium');
+
+        function updateGeographyMediumVisibility() {
+            const geographyChecked = document.getElementById('subject-geography').checked;
+            if (geographyChecked) {
+                geographyMediumGroup.style.display = 'block';
+                geographyMediumSelect.required = true;
+            } else {
+                geographyMediumGroup.style.display = 'none';
+                geographyMediumSelect.required = false;
+                geographyMediumSelect.value = ""; // Clear if hidden
+            }
+        }
+        subjectCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateGeographyMediumVisibility);
+        });
+
+        // 4. Age Calculation
+        const dobInput = document.getElementById('dob');
+        const ageInput = document.getElementById('age');
+        dobInput.addEventListener('change', function() {
+            ageInput.value = calculateAge(this.value, REFERENCE_DATE);
+        });
+
+        // --- Confirmation/Message Box ---
+        function showMessage(message, isError) {
+            var msgBox = document.getElementById('message-box');
+            msgBox.textContent = message;
+            if (isError) {
+                msgBox.classList.add('error');
+            } else {
+                msgBox.classList.remove('error');
+            }
+            msgBox.style.opacity = '1';
+            msgBox.style.visibility = 'visible';
+            setTimeout(function() {
+                msgBox.style.opacity = '0';
+                msgBox.style.visibility = 'hidden';
+            }, 3000);
+        }
+
+        // --- Form Functions ---
+        function generateUniqueId() {
+            // Generates a random alphanumeric string of length 6
+            const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); 
+            // The resulting ID will be APP + 6 characters (e.g., APP1A2B3C)
+            return APP_ID_PREFIX + randomPart;
+        }
+
+        function generateAppId() {
+            var appId = generateUniqueId();
+            document.getElementById('app-id-display').textContent = appId;
+            document.getElementById('app_id').value = appId;
+        }
+        generateAppId();
+
+        document.getElementById('photo').addEventListener('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var photoPreview = document.getElementById('photo-preview');
+                    photoPreview.src = e.target.result;
+                    photoPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('registration-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            var form = this;
+            var isValid = true;
+            
+            // Re-run visibility logic before validation
+            updateGeographyMediumVisibility();
+            updateHandicapPercentageVisibility();
+
+            // Validation logic
+            var requiredFields = form.querySelectorAll('[required]');
+            requiredFields.forEach(function(field) {
+                var errorMsg = field.nextElementSibling;
+                // Handle file and text/select/textarea fields
+                if (field.type === 'file') {
+                    if (!field.files.length) {
+                        field.classList.add('invalid');
+                        if (errorMsg) errorMsg.style.display = 'block';
+                        isValid = false;
+                    } else {
+                        field.classList.remove('invalid');
+                        if (errorMsg) errorMsg.style.display = 'none';
+                    }
+                } else if (field.name === 'handicap_percentage' && field.hasAttribute('required')) {
+                     const percentage = parseInt(field.value);
+                     if (isNaN(percentage) || percentage < 1 || percentage > 100) {
+                        field.classList.add('invalid');
+                        if (errorMsg) errorMsg.style.display = 'block';
+                        isValid = false;
+                     } else {
+                        field.classList.remove('invalid');
+                        if (errorMsg) errorMsg.style.display = 'none';
+                     }
+                }
+                else if (!field.value) {
+                    field.classList.add('invalid');
+                    if (errorMsg) errorMsg.style.display = 'block';
+                    isValid = false;
+                } else {
+                    field.classList.remove('invalid');
+                    if (errorMsg) errorMsg.style.display = 'none';
+                }
+            });
+
+            var phone = document.getElementById('phone');
+            var aadhaar = document.getElementById('aadhaar');
+            var email = document.getElementById('email');
+            var subjects = form.querySelectorAll('input[name="subjects"]:checked');
+
+            if (!/^\d{10}$/.test(phone.value)) {
+                phone.classList.add('invalid');
+                phone.nextElementSibling.textContent = 'Phone number must be exactly 10 digits.';
+                phone.nextElementSibling.style.display = 'block';
+                isValid = false;
+            } else { phone.classList.remove('invalid'); }
+            
+            if (!/^\d{12}$/.test(aadhaar.value)) {
+                aadhaar.classList.add('invalid');
+                aadhaar.nextElementSibling.textContent = 'Aadhaar number must be exactly 12 digits.';
+                aadhaar.nextElementSibling.style.display = 'block';
+                isValid = false;
+            } else { aadhaar.classList.remove('invalid'); }
+            
+            if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email.value)) {
+                email.classList.add('invalid');
+                email.nextElementSibling.textContent = 'Invalid email format.';
+                email.nextElementSibling.style.display = 'block';
+                isValid = false;
+            } else { email.classList.remove('invalid'); }
+            
+            if (subjects.length !== 2) {
+                document.getElementById('subjects-error').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('subjects-error').style.display = 'none';
+            }
+            
+            // Final check on conditional percentage field if necessary
+            if (handicapStatus.value === 'Handicap') {
+                const percentage = parseInt(handicapPercentageInput.value);
+                if (isNaN(percentage) || percentage < 1 || percentage > 100) {
+                    handicapPercentageInput.classList.add('invalid');
+                    handicapPercentageInput.nextElementSibling.style.display = 'block';
+                    isValid = false;
+                }
+            }
+
+
+            if (!isValid) {
+                showMessage("Please fix the validation errors.", true);
+                return;
+            }
+
+            var submitBtn = document.querySelector('#registration-form .submit-btn');
+            submitBtn.disabled = true;
+            document.getElementById('submit-text').style.display = 'none';
+            document.getElementById('submit-spinner').style.display = 'block';
+
+            var formData = new FormData(form);
+            var student = {};
+            
+            // Manually collect form data and calculated age
+            var allInputs = form.querySelectorAll('input, select, textarea');
+            allInputs.forEach(function(field) {
+                if (field.type !== 'file' && field.name) {
+                    student[field.name] = field.value;
+                }
+            });
+
+            // Set the calculated age
+            student.age = document.getElementById('age').value; 
+            student.subjects = Array.from(subjects).map(function(s) { return s.value; });
+
+            var photoInput = document.getElementById('photo');
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                student['photo_data_url'] = e.target.result;
+                
+                // 1. Save locally (as requested)
+                saveStudent(student); 
+                
+                // 2. Send to Google Sheet (New)
+                sendToGoogleSheet(student);
+
+                showMessage("Application submitted successfully! Data saved locally and sent to Sheet.", false);
+                form.reset();
+                document.getElementById('photo-preview').style.display = 'none';
+                generateAppId();
+                upDownAddressGroup.style.display = 'none'; // Reset conditional field
+                geographyMediumGroup.style.display = 'none'; // Reset conditional field
+                handicapPercentageGroup.style.display = 'none'; // Reset conditional field
+                submitBtn.disabled = false;
+                document.getElementById('submit-text').style.display = 'inline';
+                document.getElementById('submit-spinner').style.display = 'none';
+            };
+            reader.readAsDataURL(photoInput.files[0]);
+        });
+
+        function saveStudent(student) {
+            students.push(student);
+            localStorage.setItem('students', JSON.stringify(students));
+        }
+        
+        // --- View Data Functions ---
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadAndDisplayStudents();
+        });
+
+        function loadAndDisplayStudents() {
+            var searchQuery = document.getElementById('search-query').value.toLowerCase();
+            var searchField = document.getElementById('search-field').value;
+            students = JSON.parse(localStorage.getItem('students')) || [];
+            
+            var filteredStudents = students.filter(function(student) {
+                var value = student[searchField] ? String(student[searchField]).toLowerCase() : '';
+                return value.includes(searchQuery);
+            });
+
+            var tableBody = document.getElementById('students-table-body');
+            tableBody.innerHTML = ''; 
+
+            if (filteredStudents.length === 0) {
+                var noDataRow = document.createElement('tr');
+                noDataRow.className = 'no-data';
+                noDataRow.innerHTML = '<td colspan="6" style="text-align: center;">No student records found.</td>';
+                tableBody.appendChild(noDataRow);
+            } else {
+                filteredStudents.forEach(function(student) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = '<td>' + student.app_id + '</td>' +
+                                    '<td>' + student.full_name + '</td>' +
+                                    '<td>' + student.class + '</td>' +
+                                    '<td>' + student.div + '</td>' +
+                                    '<td>' + student.phone + '</td>' +
+                                    '<td>' +
+                                        '<button class="action-btn view-btn" data-id="' + student.app_id + '">View</button>' +
+                                        '<button class="action-btn edit-btn" data-id="' + student.app_id + '">Edit</button>' +
+                                        '<button class="action-btn delete-btn" data-id="' + student.app_id + '">Delete</button>' +
+                                    '</td>';
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+        
+        // Use a single event listener on the table body for all action buttons
+        document.getElementById('students-table-body').addEventListener('click', function(e) {
+            var target = e.target;
+            if (target.classList.contains('view-btn')) {
+                showDetailsModal(target.getAttribute('data-id'));
+            } else if (target.classList.contains('edit-btn')) {
+                showEditModal(target.getAttribute('data-id'));
+            } else if (target.classList.contains('delete-btn')) {
+                showDeleteModal(target.getAttribute('data-id'));
+            }
+        });
+
+        // --- Export XLS Function (Renamed ID) ---
+        document.getElementById('export-xls-btn').addEventListener('click', function(e) {
+            if (students.length === 0) {
+                showMessage("No data to export.", true);
+                e.preventDefault();
+                return;
+            }
+
+            var headers = Object.keys(students[0]).filter(function(key) { return key !== 'photo_data_url'; });
+            var csv = [
+                headers.join(','),
+                students.map(function(row) { 
+                    return headers.map(function(header) { return JSON.stringify(row[header]); }).join(',');
+                }).join('\n')
+            ].join('\n');
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'student_data.xls'); // Changed extension to .xls
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showMessage("Data exported successfully as XLS!", false);
+        });
+        
+        // --- Export PDF Function (New) ---
+        document.getElementById('export-pdf-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            exportPdf('students-table');
+        });
+        
+        function exportPdf(tableId) {
+            const table = document.getElementById(tableId);
+            if (!table || students.length === 0) {
+                showMessage("No data to export to PDF.", true);
+                return;
+            }
+
+            // Clone table and remove the 'Actions' column headers and cells for clean export
+            const tableClone = table.cloneNode(true);
+            const ths = tableClone.querySelectorAll('th');
+            const actionIndex = Array.from(ths).findIndex(th => th.textContent === 'Actions');
+            
+            if (actionIndex !== -1) {
+                // Remove the Actions header
+                tableClone.querySelector('thead tr').children[actionIndex].remove();
+                
+                // Remove the Actions cells from all body rows
+                tableClone.querySelectorAll('tbody tr').forEach(row => {
+                    if (row.children[actionIndex]) {
+                        row.children[actionIndex].remove();
+                    }
+                });
+            }
+
+            const title = document.querySelector('#data-view-content h1').textContent;
+            
+            const options = {
+                margin: [10, 10, 10, 10], 
+                filename: 'student_records.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, logging: false, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            showMessage("Generating PDF...", false);
+            
+            // Create a wrapper for PDF header + Table
+            const pdfContent = document.createElement('div');
+            pdfContent.innerHTML = `<h1 style="text-align: center; margin-bottom: 20px;">${title}</h1>`;
+            
+            // Reapply basic, minimal styles for PDF table rendering
+            tableClone.style.width = '100%';
+            tableClone.style.borderCollapse = 'collapse';
+            tableClone.querySelectorAll('th, td').forEach(el => {
+                el.style.border = '1px solid #000';
+                el.style.padding = '8px';
+                el.style.color = '#000';
+                el.style.backgroundColor = el.tagName === 'TH' ? '#f0f0f0' : '#fff';
+            });
+            
+            pdfContent.appendChild(tableClone);
+            
+
+            html2pdf().set(options).from(pdfContent).save().then(() => {
+                 showMessage("PDF downloaded successfully!", false);
+            }).catch(error => {
+                 console.error("PDF generation failed:", error);
+                 showMessage("Error generating PDF. Try printing instead.", true);
+            });
+        }
+
+
+        // --- Modals ---
+        modalCloses.forEach(function(closeBtn) {
+            closeBtn.onclick = function() {
+                var modalId = this.getAttribute('data-modal');
+                document.getElementById(modalId).style.display = "none";
+            };
+        });
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        };
+
+        function showDetailsModal(appId) {
+            var student = students.find(function(s) { return s.app_id === appId; });
+            if (!student) {
+                showMessage("Record not found.", true);
+                return;
+            }
+            document.getElementById('modal-photo').src = student.photo_data_url;
+            document.getElementById('modal-app-id').textContent = student.app_id;
+            document.getElementById('modal-surname').textContent = student.surname;
+            document.getElementById('modal-full-name').textContent = student.full_name;
+            document.getElementById('modal-fathers-name').textContent = student.fathers_name;
+            document.getElementById('modal-mothers-name').textContent = student.mothers_name;
+            document.getElementById('modal-dob').textContent = student.dob;
+            document.getElementById('modal-age').textContent = student.age || 'N/A';
+            document.getElementById('modal-gender').textContent = student.gender;
+            document.getElementById('modal-handicap-status').textContent = student.handicap_status;
+            document.getElementById('modal-handicap-percentage').textContent = student.handicap_percentage || 'N/A'; // New
+            document.getElementById('modal-phone').textContent = student.phone;
+            document.getElementById('modal-aadhaar').textContent = student.aadhaar;
+            document.getElementById('modal-email').textContent = student.email;
+            document.getElementById('modal-address').textContent = student.address;
+            document.getElementById('modal-class').textContent = student.class;
+            document.getElementById('modal-div').textContent = student.div;
+            document.getElementById('modal-board').textContent = student.board;
+            document.getElementById('modal-subject-language').textContent = student.subject_language;
+            document.getElementById('modal-subjects').textContent = student.subjects ? student.subjects.join(', ') : '';
+            document.getElementById('modal-geography-medium').textContent = student.geography_medium || 'N/A';
+            document.getElementById('modal-caste').textContent = student.caste;
+            document.getElementById('modal-religion').textContent = student.religion;
+            document.getElementById('modal-blood-group').textContent = student.blood_group;
+            document.getElementById('modal-weight').textContent = student.weight;
+            document.getElementById('modal-height').textContent = student.height;
+            document.getElementById('modal-reg-number').textContent = student.reg_number;
+            document.getElementById('modal-pen-number').textContent = student.pen_number || 'N/A';
+            document.getElementById('modal-saral-id').textContent = student.saral_id || 'N/A';
+            document.getElementById('modal-ration-card').textContent = student.ration_card;
+            document.getElementById('modal-account-holder').textContent = student.account_holder;
+            document.getElementById('modal-account-number').textContent = student.account_number;
+            document.getElementById('modal-ifsc-code').textContent = student.ifsc_code;
+            document.getElementById('modal-fathers-occupation').textContent = student.fathers_occupation;
+            document.getElementById('modal-mothers-occupation').textContent = student.mothers_occupation;
+            document.getElementById('modal-grade-10-percentage').textContent = student.grade_10_percentage;
+            document.getElementById('modal-board-reg-number').textContent = student.board_reg_number;
+            document.getElementById('modal-roll-number').textContent = student.roll_number;
+            document.getElementById('modal-center-code').textContent = student.center_code;
+            document.getElementById('modal-updown-status').textContent = student.updown_status;
+            document.getElementById('modal-updown-address').textContent = student.updown_address || 'N/A';
+
+            detailsModal.style.display = 'flex';
+        }
+
+        // --- Edit Modal Functions ---
+        
+        // 1. Up-Down Address Visibility in Edit Modal
+        const editUpDownStatus = document.getElementById('edit-updown-status');
+        const editUpDownAddressGroup = document.getElementById('edit-updown-address-group');
+        editUpDownStatus.addEventListener('change', function() {
+            editUpDownAddressGroup.style.display = this.value === 'Yes' ? 'block' : 'none';
+        });
+        
+        // 2. Handicap Percentage Visibility in Edit Modal
+        const editHandicapStatus = document.getElementById('edit-handicap-status');
+        const editHandicapPercentageGroup = document.getElementById('edit-handicap-percentage-group');
+        const editHandicapPercentageInput = document.getElementById('edit-handicap-percentage');
+
+        function updateEditHandicapPercentageVisibility() {
+            if (editHandicapStatus.value === 'Handicap') {
+                editHandicapPercentageGroup.style.display = 'block';
+                editHandicapPercentageInput.setAttribute('required', 'required');
+            } else {
+                editHandicapPercentageGroup.style.display = 'none';
+                editHandicapPercentageInput.removeAttribute('required');
+                editHandicapPercentageInput.value = ''; // Clear value if hidden
+                editHandicapPercentageInput.classList.remove('invalid');
+            }
+        }
+        editHandicapStatus.addEventListener('change', updateEditHandicapPercentageVisibility);
+
+        // 3. Geography Medium Visibility in Edit Modal
+        const editSubjectCheckboxes = document.querySelectorAll('#edit-subjects-group input[name="subjects"]');
+        const editGeographyMediumGroup = document.getElementById('edit-geography-medium-group');
+        const editGeographyMediumSelect = document.getElementById('edit-geography-medium');
+
+        function updateEditGeographyMediumVisibility() {
+            const geographyChecked = document.getElementById('edit-subject-geography').checked;
+            if (geographyChecked) {
+                editGeographyMediumGroup.style.display = 'block';
+                editGeographyMediumSelect.required = true;
+            } else {
+                editGeographyMediumGroup.style.display = 'none';
+                editGeographyMediumSelect.required = false;
+                editGeographyMediumSelect.value = "";
+            }
+        }
+        editSubjectCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateEditGeographyMediumVisibility);
+        });
+
+        // 4. Age Calculation in Edit Modal
+        const editDobInput = document.getElementById('edit-dob');
+        const editAgeInput = document.getElementById('edit-age');
+        editDobInput.addEventListener('change', function() {
+            editAgeInput.value = calculateAge(this.value, REFERENCE_DATE);
+        });
+
+
+        function showEditModal(appId) {
+            var student = students.find(function(s) { return s.app_id === appId; });
+            if (!student) {
+                showMessage("Record not found.", true);
+                return;
+            }
+
+            // Personal
+            document.getElementById('edit-app-id').value = student.app_id;
+            document.getElementById('edit-surname').value = student.surname;
+            document.getElementById('edit-full-name').value = student.full_name;
+            document.getElementById('edit-fathers-name').value = student.fathers_name;
+            document.getElementById('edit-mothers-name').value = student.mothers_name;
+            document.getElementById('edit-dob').value = student.dob;
+            document.getElementById('edit-age').value = student.age || calculateAge(student.dob, REFERENCE_DATE); // Set calculated age
+            document.getElementById('edit-gender').value = student.gender;
+            document.getElementById('edit-handicap-status').value = student.handicap_status;
+            
+            // Conditional Field visibility initialization
+            updateEditHandicapPercentageVisibility();
+            document.getElementById('edit-handicap-percentage').value = student.handicap_percentage || ''; // New
+            
+            document.getElementById('edit-blood-group').value = student.blood_group;
+            document.getElementById('edit-weight').value = student.weight;
+            document.getElementById('edit-height').value = student.height;
+            document.getElementById('edit-fathers-occupation').value = student.fathers_occupation;
+            document.getElementById('edit-mothers-occupation').value = student.mothers_occupation;
+            
+            // Academic
+            document.getElementById('edit-class').value = student.class;
+            document.getElementById('edit-div').value = student.div;
+            document.getElementById('edit-board').value = student.board;
+            document.getElementById('edit-subject-language').value = student.subject_language;
+            document.getElementById('edit-grade-10-percentage').value = student.grade_10_percentage;
+            document.getElementById('edit-reg-number').value = student.reg_number;
+            document.getElementById('edit-pen-number').value = student.pen_number;
+            document.getElementById('edit-saral-id').value = student.saral_id;
+
+            // Subjects
+            document.querySelectorAll('#edit-subjects-group input[type="checkbox"]').forEach(function(checkbox) {
+                checkbox.checked = student.subjects && student.subjects.includes(checkbox.value);
+            });
+            
+            // Conditional Fields update
+            updateEditGeographyMediumVisibility(); // Show/hide Geography Medium
+            document.getElementById('edit-geography-medium').value = student.geography_medium || '';
+            
+            // Contact & Identification
+            document.getElementById('edit-phone').value = student.phone;
+            document.getElementById('edit-aadhaar').value = student.aadhaar;
+            document.getElementById('edit-email').value = student.email;
+            document.getElementById('edit-address').value = student.address;
+            document.getElementById('edit-board-reg-number').value = student.board_reg_number;
+            document.getElementById('edit-roll-number').value = student.roll_number;
+            document.getElementById('edit-center-code').value = student.center_code;
+            
+            // Up-Down Status
+            document.getElementById('edit-updown-status').value = student.updown_status;
+            editUpDownAddressGroup.style.display = student.updown_status === 'Yes' ? 'block' : 'none'; // Conditional visibility
+            document.getElementById('edit-updown-address').value = student.updown_address;
+
+            // Ration & Bank
+            document.getElementById('edit-ration-card').value = student.ration_card;
+            document.getElementById('edit-account-holder').value = student.account_holder;
+            document.getElementById('edit-account-number').value = student.account_number;
+            document.getElementById('edit-ifsc-code').value = student.ifsc_code;
+
+            // Other
+            document.getElementById('edit-caste').value = student.caste; 
+            document.getElementById('edit-religion').value = student.religion;
+
+            // Photo Preview
+            var photoPreview = document.getElementById('edit-photo-preview');
+            photoPreview.src = student.photo_data_url;
+            photoPreview.style.display = 'block';
+
+            editModal.style.display = 'flex';
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Manual validation check for percentage during edit
+            if (document.getElementById('edit-handicap-status').value === 'Handicap') {
+                const percentage = parseInt(document.getElementById('edit-handicap-percentage').value);
+                if (isNaN(percentage) || percentage < 1 || percentage > 100) {
+                    document.getElementById('edit-handicap-percentage').classList.add('invalid');
+                    showMessage("Handicap percentage must be between 1 and 100.", true);
+                    return;
+                }
+            }
+
+            var appId = document.getElementById('edit-app-id').value;
+            var studentIndex = students.findIndex(function(s) { return s.app_id === appId; });
+            if (studentIndex === -1) {
+                showMessage("Record not found for editing.", true);
+                return;
+            }
+
+            var form = this;
+            var updatedStudent = students[studentIndex];
+            
+            // Manually collect updated form data
+            var allInputs = form.querySelectorAll('input, select, textarea');
+             allInputs.forEach(function(field) {
+                if (field.type !== 'file' && field.name) {
+                    updatedStudent[field.name] = field.value;
+                }
+            });
+            
+            // Recalculate and set age on save
+            updatedStudent.age = calculateAge(document.getElementById('edit-dob').value, REFERENCE_DATE);
+            
+            updatedStudent.subjects = Array.from(document.querySelectorAll('#edit-subjects-group input[name="subjects"]:checked')).map(function(s) { return s.value; });
+
+            var photoInput = document.getElementById('edit-photo');
+            if (photoInput.files.length > 0) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    updatedStudent.photo_data_url = e.target.result;
+                    students[studentIndex] = updatedStudent;
+                    localStorage.setItem('students', JSON.stringify(students));
+                    editModal.style.display = 'none';
+                    loadAndDisplayStudents();
+                    showMessage("Record updated successfully!", false);
+                };
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                students[studentIndex] = updatedStudent;
+                localStorage.setItem('students', JSON.stringify(students));
+                editModal.style.display = 'none';
+                loadAndDisplayStudents();
+                showMessage("Record updated successfully!", false);
+            }
+        });
+
+        function showDeleteModal(appId) {
+            deleteModal.style.display = 'flex';
+            document.getElementById('confirm-delete-btn').onclick = function() {
+                deleteStudent(appId);
+            };
+            document.getElementById('cancel-delete-btn').onclick = function() {
+                deleteModal.style.display = 'none';
+            };
+        }
+
+        function deleteStudent(appId) {
+            students = students.filter(function(s) { return s.app_id !== appId; });
+            localStorage.setItem('students', JSON.stringify(students));
+            deleteModal.style.display = 'none';
+            loadAndDisplayStudents();
+            showMessage("Record deleted successfully.", false);
+        }
+
+        // --- Dark/Light Mode Toggle ---
+        var themeToggle = document.getElementById('theme-toggle');
+        var currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+            themeToggle.textContent = currentTheme === 'dark-mode' ? '☀️' : '🌙';
+        }
+
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            var theme = 'light-mode';
+            if (document.body.classList.contains('dark-mode')) {
+                theme = 'dark-mode';
+            }
+            localStorage.setItem('theme', theme);
+            themeToggle.textContent = theme === 'dark-mode' ? '☀️' : '🌙';
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMT.D.R. Student Portal</title>
+
+        <link rel="icon" type="image/png" href="study.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Poppins:wght@700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <style>
+        :root {
+            --light-bg: #f8fafc; /* slate-50 */
+            --light-text: #0f172a; /* slate-900 */
+            --dark-bg: #020617; /* slate-950 */
+            --dark-text: #f8fafc; /* slate-50 */
+            --primary-color: #6366f1; /* indigo-500 */
+            --secondary-color: #9fb9b0; /* emerald-500 */
+            --cursor-color: #004cff;
+            --cursor-color-dark: #f8fafc;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #e3ecfc;
+            background-image: radial-gradient(rgba(66, 153, 225, 0.1) 1px, transparent 1px); /* very light blue/indigo dot */
+            background-size: 25px 25px;
+            color: var(--light-text);
+            transition: background-color 0.6s ease-in-out, color 0.6s ease-in-out;
+            cursor: none;
+        }
+
+          body::before {
+            content: '';
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('gen2.png'); 
+            background-size: cover;
+            background-position: center;
+            opacity: 0.080; 
+            z-index: -1; 
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        /* Custom Cursor */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: var(--cursor-color);
+            border-radius: 50%;
+            pointer-events: none; 
+            z-index: 9999;
+            transition: transform 0.3s ease-out, background-color 0.6s ease-in-out, width 0.3s ease, height 0.3s ease;
+            mix-blend-mode: difference; 
+        }
+        #custom-cursor.hover {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(129, 140, 248, 0.5); 
+        }
+        a, button, .feature-card {
+            cursor: none;
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 25px 25px;
+        }
+        body.dark #custom-cursor {
+            background-color: var(--cursor-color-dark);
+        }
+        body.dark #custom-cursor.hover {
+             background-color: rgba(129, 140, 248, 0.5); 
+        }
+        body.dark #features {
+            background-color: var(--dark-bg);
+        }
+        body.dark .feature-card {
+            background-color: #0f172a; 
+            border-color: #1e293b;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1);
+        }
+        body.dark .feature-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3), 0 8px 15px rgba(0,0,0,0.15);
+        }
+        body.dark .text-slate-600 { color: #94a3b8;  }
+        body.dark .text-slate-500 { color: #64748b; }
+        body.dark .nav-link { color: #cbd5e1;  }
+        body.dark .nav-link:hover { color: var(--primary-color); }
+        body.dark header.scrolled {
+            background-color: rgba(2, 6, 23, 0.8); 
+        }
+        body.dark .hero-callout-card {
+            background: rgba(15, 23, 42, 0.6); 
+            border-color: rgba(30, 41, 59, 0.8); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        body.dark .footer {
+            background-color: #0f172a;
+            border-top-color: #1e293b;
+        }
+        body.dark .float-element {
+            color: #334155; 
+        }
+        body.dark #mobile-menu {
+            background-color: #0f172a;
+        }
+        body.dark .footer-name {
+            color: #e2e8f0;
+        }
+        h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-code {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .gradient-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none; 
+        }
+        .blob {
+            position: absolute;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: blur(100px); 
+            opacity: 0.2; 
+            transition: opacity 0.6s ease-in-out, border-radius 8s ease-in-out, filter 0.6s ease-in-out;
+            will-change: transform; 
+            animation: morph 15s linear infinite alternate;
+        }
+        
+        @keyframes morph {
+            0% {
+                border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            }
+            100% {
+                border-radius: 60% 40% 30% 70% / 50% 60% 50% 40%;
+            }
+        }
+
+        body.dark .blob { 
+            opacity: 0.3; 
+            filter: blur(110px); 
+        }
+        .blob1 { width: 600px; height: 600px; background: #a78bfa; /* violet-400 */ top: -25%; left: -15%; animation-duration: 18s; }
+        .blob2 { width: 500px; height: 500px; background: #60a5fa; /* blue-400 */ bottom: -20%; right: -10%; animation-duration: 15s; }
+        .blob3 { width: 400px; height: 400px; background: #34d399; /* emerald-400 */ top: 10%; right: 10%; animation-duration: 12s; }
+
+        #floating-elements {
+            perspective: 1000px;
+        }
+        .float-element {
+            position: absolute;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.75rem;
+            color: #94a3b8; 
+            opacity: 0; 
+            will-change: transform, opacity;
+            transition: color 0.6s ease-in-out;
+        }
+
+        header {
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+        }
+        header.scrolled {
+            background-color: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(0);
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px -5px rgba(251, 146, 60, 0.4), 0 5px 10px -3px rgba(251, 146, 60, 0.2);
+        }
+
+        .hero-image-container {
+            position: relative;
+            padding-bottom: 100%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 1.1rem; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+            transform: scale(1) rotate(0deg);
+            transition: transform 0.5s ease-in-out;
+        }
+        .hero-image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 110%;
+            height: 110%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .hero-image-container:hover {
+             transform: scale(1.02) rotate(1deg);
+        }
+
+        .hero-callout-card {
+            background: rgba(255, 255, 255, 0.6); 
+            border: 1px solid rgba(226, 232, 240, 0.8); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        .hero-callout-card:hover {
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .feature-card {
+            border: 1px solid #e2e8f0; 
+            transition: all 0.4s ease;
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-color);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08), 0 10px 15px rgba(0, 0, 0, 0.05);
+        }
+        .footer {
+            background-color: var(--light-bg);
+            border-top: 1px solid #e2e8f0;
+            transition: background-color 0.6s ease-in-out, border-color 0.6s ease-in-out;
+        }
+        .footer-name {
+            color: #475569;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+
+    <!-- Container for animated background -->
+    <div class="gradient-bg">
+        <div class="blob blob1"></div>
+        <div class="blob blob2"></div>
+        <div class="blob blob3"></div>
+    </div>
+    <div id="floating-elements" class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <!-- Elements will be populated by JS -->
+    </div>
+
+    <div class="relative z-10">
+        <!-- Header -->
+        <header class="py-4 fixed top-0 left-0 right-0 z-50">
+            <div class="container mx-auto flex justify-between items-center px-6 md:px-8">
+                <div class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-orange-300">
+                    StudentPortal
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <p class="text-3x1 text-slate-700 dark:text-slate-300">D.R. Student Data </p>
+                </nav>
+                <a href="login.html" class="hidden md:inline-block bg-gradient-to-r from-rose-400 to-orange-400 text-white font-semibold py-2.5 px-6 rounded-lg shadow-md cta-button">
+                    Get Started
+                </a>
+                <button id="mobile-menu-button" class="md:hidden text-slate-800 dark:text-slate-200 z-50">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-slate-50 transform -translate-x-full transition-transform duration-300 ease-in-out z-40 md:hidden">
+            <div class="flex flex-col items-center justify-center h-full space-y-8">
+                 <p class="text-2xl text-slate-800 dark:text-slate-200">D.R. Student Data</p>
+                 <p class="text-lg text-slate-600 dark:text-slate-400">Concept By Physics Dept.</p>
+                 <a href="login.html" class="w-auto bg-gradient-to-r from-rose-400 to-orange-400 text-white font-semibold py-4 px-8 rounded-xl shadow-lg cta-button text-lg">
+                    Get Started
+                </a>
+            </div>
+        </div>
+
+        <!-- Hero Section -->
+        <main class="min-h-screen flex items-center pt-20 md:pt-0">
+            <div class="container mx-auto grid md:grid-cols-2 gap-8 md:gap-16 items-center px-6 md:px-8">
+                <div class="hero-content text-center md:text-left opacity-0 translate-y-8">
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight mb-6">
+                        Concept By <span class="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-orange-300">Physics Dept.</span>,Developed By <span class="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-orange-300">Tanmay_</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-600 max-w-xl mx-auto md:mx-0 mb-10">
+                        Your journey of knowledge awaits. Unlock your notes, resume your studies, and continue to build your legacy.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start items-center gap-4">
+                        <a href="login.html" class="w-full sm:w-auto bg-orange-400 text-white font-semibold py-4 px-8 rounded-xl shadow-lg cta-button text-lg">
+                            Start Learning Now
+                        </a>
+                        <a href="login.html" class="w-full sm:w-auto bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold py-4 px-8 rounded-xl shadow-md cta-button border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-lg">
+                            Explore Features
+                        </a>
+                    </div>
+
+                    <div class="hero-callout-card p-6 mt-12 max-w-md mx-auto md:mx-0 text-left">
+                        <p class="text-md text-slate-900 dark:text-slate-900">
+                            <span class="font-bold text-lg text-orange-900 mr-2">&ldquo;</span>
+                            "The harder you work for something, the greater you’ll feel when you achieve it!"
+                        </p>
+                        <p class="mt-4 text-sm font-code text-slate-500 dark:text-rose-400">~ Mr Deshpande, Physics Senior</p>
+                    </div>
+                </div>
+                <div class="hero-image-wrap flex justify-center opacity-0 translate-x-8 mt-12 md:mt-0">
+                    <div class="hero-image-container w-full max-w-md md:max-w-none">
+                        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto.format&fit=crop" alt="Students studying in a modern library">
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 md:py-32 transition-colors duration-600 ease-in-out">
+            <div class="container mx-auto px-6 md:px-8">
+                <div class="text-center mb-16">
+                    <span class="text-primary-color font-semibold uppercase tracking-wider font-code">Unlock Your Potential</span>
+                    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight mt-2 mb-4"><span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-blue-500">WELCOME</span> To D.R. Student Portal.</h2>
+                    <p class="text-lg text-slate-500 max-w-3xl mx-auto">
+A place where curiosity meets knowledge, and every visit brings you one step closer to achieving your academic and personal goals!
+                    </p>
+                    <p class="text-4xl font-bold text-white max-w-3xl mx-auto mt-6">Click below to submit your form
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                     <a href="main.html"><div class="feature-card bg-white dark:bg-slate-900 p-8 rounded-2xl">
+                        <!-- <div class="bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300 rounded-lg w-14 h-14 flex items-center justify-center mb-6 shadow-md">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div> -->
+                        <h3 class="text-4xl text-blue-600 font-bold mb-3">11th</h3>
+                        <p class="text-xl text-slate-200 dark:text-slate-200">Fill out the Class 11th form carefully with correct personal, academic, and contact details. Ensure all information matches your previous records to avoid delays in admission or document verification.</p>
+                    </div>
+                    </a>
+                    <!-- Feature 2 -->
+                     <a href="main.html"><div class="feature-card bg-white dark:bg-slate-900 p-8 rounded-2xl">
+                        <!-- <div class="bg-emerald-100 text-emerald-600 dark:bg-emerald-900 dark:text-emerald-300 rounded-lg w-14 h-14 flex items-center justify-center mb-6 shadow-md">
+                           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div> -->
+                        <h3 class="text-4xl text-blue-600 font-bold mb-3">12th</h3>
+                        <p class="text-xl text-slate-200 dark:text-slate-200">Please complete the Class 12th form with accurate personal and academic details. Verify that all information matches your LC records to ensure a smooth process and timely approval.</p>
+                    </div>
+                    </a>
+                    <!-- Feature 3 -->
+                     <a href="id.html"><div class="feature-card bg-white dark:bg-slate-900 p-8 rounded-2xl">
+                        <!-- <div class="bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300 rounded-lg w-14 h-14 flex items-center justify-center mb-6 shadow-md">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div> -->
+                        <h3 class="text-4xl text-blue-600 font-bold mb-3">Identity Card</h3>
+                        <p class="text-slate-200 dark:text-slate-200">Fill out the Identity Card form carefully with correct personal, academic, and contact details. Ensure the information matches school records, and upload a recent passport-size photograph for proper verification and card issuance.</p>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer py-12">
+             <div class="container mx-auto text-center text-slate-500 dark:text-slate-400 px-6 md:px-8">
+                <p> Developed <span class="footer-name">~Tanmay Wadile .</span> </p>
+                <p class="text-sm mt-2">&copy; Copyright 2025 D.R.Collage., Ltd. All Rights Reserved.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // --- Custom Cursor Logic ---
+            const cursor = document.getElementById('custom-cursor');
+            const hoverElements = document.querySelectorAll('a, button, .feature-card');
+
+            // Move cursor
+            window.addEventListener('mousemove', e => {
+                gsap.to(cursor, { 
+                    x: e.clientX - 5, // center the 10px dot
+                    y: e.clientY - 5, // center the 10px dot
+                    duration: 0.2, 
+                    ease: 'power2.out' 
+                });
+            });
+
+            // Handle hover states
+            hoverElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+
+
+            // Animate blobs
+            const blobs = document.querySelectorAll('.blob');
+            blobs.forEach(blob => {
+                gsap.to(blob, {
+                    x: () => (Math.random() - 0.5) * 600,
+                    y: () => (Math.random() - 0.5) * 600,
+                    scale: () => 1 + (Math.random() - 0.5) * 0.5,
+                    duration: 25,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            });
+
+            // --- Floating Elements Logic ---
+            const floatingContainer = document.getElementById('floating-elements');
+            const elementsContent = ['∫', '√x', '⌬', 'α', '∑', '⚛', 'π', 'ħ', 'E=mc²', 'H₂O', 'β', 'Ω', 'ƒ(x)', '∇' ,'+','-'];
+            
+            elementsContent.forEach(content => {
+                const el = document.createElement('span');
+                el.className = 'float-element';
+                el.textContent = content;
+                floatingContainer.appendChild(el);
+
+                gsap.set(el, {
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    scale: gsap.utils.random(0.5, 1.2),
+                    opacity: 0
+                });
+
+                gsap.to(el, { opacity: gsap.utils.random(0.25, 0.5), duration: 2, delay: Math.random() });
+
+                function animateElement(element) {
+                    gsap.to(element, {
+                        x: `+=${gsap.utils.random(-200, 200)}`, // Increased movement
+                        y: `+=${gsap.utils.random(-200, 200)}`, // Increased movement
+                        rotationZ: `+=${gsap.utils.random(-45, 45)}`,
+                        duration: gsap.utils.random(8, 15), // Faster duration
+                        ease: 'power1.inOut', // Smoother ease
+                        onComplete: () => {
+                            const bounds = element.getBoundingClientRect();
+                            if(bounds.top > window.innerHeight || bounds.right < 0 || bounds.left > window.innerWidth || bounds.bottom < 0) {
+                                gsap.set(element, {
+                                    x: Math.random() * window.innerWidth,
+                                    y: Math.random() > 0.5 ? -100 : window.innerHeight + 100
+                                });
+                            }
+                            animateElement(element);
+                        }
+                    });
+                }
+                gsap.delayedCall(Math.random() * 2, animateElement, [el]);
+            });
+
+
+            // Header Scroll Effect
+            ScrollTrigger.create({
+                start: 'top -80',
+                end: 99999,
+                toggleClass: {
+                    className: 'scrolled',
+                    targets: 'header'
+                }
+            });
+            
+            // Hero Section Animations
+            gsap.fromTo('.hero-content',
+                { opacity: 0, y: 50 },
+                { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', delay: 0.5 }
+            );
+            gsap.fromTo('.hero-image-wrap',
+                { opacity: 0, x: 50, scale: 0.95 },
+                { opacity: 1, x: 0, scale: 1, duration: 1.2, ease: 'power3.out', delay: 0.8 }
+            );
+
+            // Dark Mode Transition on Scroll
+            ScrollTrigger.create({
+                trigger: '#features',
+                start: 'top center+=150',
+                end: 'bottom center-=150',
+                toggleClass: { targets: "body", className: "dark" },
+            });
+
+            // Feature Cards Animation
+            const cards = gsap.utils.toArray('.feature-card');
+            cards.forEach((card) => {
+                gsap.fromTo(card,
+                    {  y: 90, scale: 0.65, autoAlpha: 0 },
+                    {
+                        y: 0,
+                        scale: 1,
+                        autoAlpha: 1,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                        }
+                    }
+                );
+            });
+
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('-translate-x-full');
+            });
+        });
+    </script>
+</body>
+</html>
+
+

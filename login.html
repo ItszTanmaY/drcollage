@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - StudySphere</title>
+      <link rel="icon" type="image/png" href="study.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto Mono', monospace;
+            /* Dark wood texture background */
+            background-color: #3d342e;
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+        }
+
+        .font-serif-display {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .journal-container {
+            /* Simulates an open book/journal */
+            background-color: #fdfaf3; /* Warm paper color */
+            box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.4), 
+                        inset 0 0 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* The "spine" of the book */
+        .journal-container::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to right, rgba(0,0,0,0.15), rgba(0,0,0,0.0) 50%);
+            transform: translateX(-1px);
+        }
+        .journal-container::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to left, rgba(0,0,0,0.15), rgba(0,0,0,0.0) 50%);
+        }
+
+        @media (max-width: 768px) {
+            .journal-container::before, .journal-container::after {
+                display: none;
+            }
+        }
+
+        .form-flipper {
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .form-page {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari */
+        }
+
+        .form-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #d3cbc4; /* Faded ink line */
+            color: #4a403d;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: #5a4a42;
+            box-shadow: none;
+        }
+        .form-input::placeholder {
+            color: #a99f96;
+        }
+
+        .login-button {
+            background-color: #5a4a42; /* Dark, rich brown */
+            color: #fdfaf3;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            border-radius: 4px;
+        }
+        .login-button:hover {
+            background-color: #4a403d;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .link-text {
+            color: #6d5f5a;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .link-text::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            transform: scaleX(0);
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #6d5f5a;
+            transform-origin: bottom right;
+            transition: transform 0.25s ease-out;
+        }
+
+        .link-text:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+
+        /* Decorative "ink stain" */
+        .ink-stain {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 0 C 22.38 0 0 22.38 0 50 C 0 77.62 22.38 100 50 100 C 77.62 100 100 77.62 100 50 C 100 22.38 77.62 0 50 0 Z M50 2 C 76.51 2 98 23.49 98 50 C 98 76.51 76.51 98 50 98 C 23.49 98 2 76.51 2 50 C 2 23.49 23.49 2 50 2 Z" fill="%23d3cbc4" fill-opacity="0.3" transform="rotate(15 50 50) translate(5 5) scale(0.9)"/><path d="M45 10 C 20 10 5 30 15 55 C 25 80 50 95 70 80 C 90 65 95 35 75 15 C 60 0 55 10 45 10Z" fill="%23d3cbc4" fill-opacity="0.4" transform="rotate(-10 50 50) scale(1.1)"/></svg>');
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body class="text-[#4a403d]">
+
+    <div class="min-h-screen w-full flex items-center justify-center p-4 md:p-8">
+        <div class="journal-container w-full max-w-4xl h-auto md:h-[600px] grid md:grid-cols-2 rounded-md">
+            
+            <!-- Left Page -->
+            <div class="p-8 md:p-12 flex flex-col justify-center relative">
+                <div class="ink-stain"></div>
+                <div>
+                    <h1 class="font-serif-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#4a403d] mb-4">Welcome Back, Scholar.</h1>
+                    <p class="text-base text-[#6d5f5a] leading-relaxed">
+                        Your journey of knowledge awaits. Unlock your notes, resume your studies, and continue to build your legacy.
+                    </p>
+                    <div class="w-16 h-1 bg-[#d3cbc4] mt-8"></div>
+                </div>
+            </div>
+
+            <!-- Right Page (Flipper Container) -->
+            <div class="p-8 md:p-12 flex flex-col justify-center bg-black/5 border-t border-black/5 md:border-t-0 md:border-l md:border-black/5" style="perspective: 1000px;">
+                <div id="form-flipper" class="form-flipper relative w-full h-full">
+
+                    <!-- Front Side: Login Form -->
+                    <div class="form-page absolute w-full h-full">
+                        <div class="flex flex-col justify-center h-full">
+                             <h2 class="font-serif-display text-3xl font-bold mb-8">Account Login</h2>
+                            <form id="login-form" class="space-y-8">
+                                <div>
+                                    <label for="email" class="block text-sm font-medium mb-2 tracking-widest uppercase">Email Address</label>
+                                    <input type="email" id="email" name="email" placeholder="you@example.com" class="form-input w-full py-2 text-lg" required>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label for="password" class="block text-sm font-medium tracking-widest uppercase">Password</label>
+                                        <a href="#" class="text-xs link-text">Forgot?</a>
+                                    </div>
+                                    <input type="password" id="password" name="password" placeholder="••••••••" class="form-input w-full py-2 text-lg" required>
+                                </div>
+                                <div class="h-5">
+                                     <p id="error-message" class="text-red-700 text-sm"></p>
+                                </div>
+                                <button type="submit" class="w-full login-button font-bold py-3.5 px-4 text-lg">
+                                    Enter Archives
+                                </button>
+                            </form>
+                            <p class="text-center text-sm mt-8">
+                                No account? <span id="to-signup-link" class="font-bold link-text cursor-pointer">Begin your chronicle.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Back Side: Signup Form -->
+                    <div class="form-page absolute w-full h-full" style="transform: rotateY(180deg);">
+                         <div class="flex flex-col justify-center h-full">
+                            <h2 class="font-serif-display text-3xl font-bold mb-8">Create Account</h2>
+                            <form class="space-y-6">
+                                <div>
+                                    <label for="signup-name" class="block text-sm font-medium mb-2 tracking-widest uppercase">Full Name</label>
+                                    <input type="text" id="signup-name" name="signup-name" placeholder="John Doe" class="form-input w-full py-2 text-lg">
+                                </div>
+                                <div>
+                                    <label for="signup-email" class="block text-sm font-medium mb-2 tracking-widest uppercase">Email Address</label>
+                                    <input type="email" id="signup-email" name="signup-email" placeholder="you@example.com" class="form-input w-full py-2 text-lg">
+                                </div>
+                                <div>
+                                    <label for="signup-password" class="block text-sm font-medium mb-2 tracking-widest uppercase">Password</label>
+                                    <input type="password" id="signup-password" name="signup-password" placeholder="••••••••" class="form-input w-full py-2 text-lg">
+                                </div>
+                                <button type="submit" class="w-full login-button font-bold py-3.5 px-4 text-lg">
+                                    Create My Account
+                                </button>
+                            </form>
+                            <p class="text-center text-sm mt-8">
+                                Already a member? <span id="to-login-link" class="font-bold link-text cursor-pointer">Enter the archives.</span>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const flipper = document.getElementById('form-flipper');
+            const toSignupLink = document.getElementById('to-signup-link');
+            const toLoginLink = document.getElementById('to-login-link');
+
+            toSignupLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                flipper.style.transform = 'rotateY(180deg)';
+            });
+
+            toLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                flipper.style.transform = 'rotateY(0deg)';
+            });
+
+            // --- Admin Login Logic ---
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('error-message');
+
+            // WARNING: This is NOT secure. The password is visible in the source code.
+            // This is for demonstration purposes only.
+            const ADMIN_EMAIL = 'admin@studysphere.io';
+            const ADMIN_PASSWORD = 'Adm1n@Spher3-V!ntage';
+
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent the form from submitting normally
+
+                const enteredEmail = emailInput.value;
+                const enteredPassword = passwordInput.value;
+
+                if (enteredEmail === ADMIN_EMAIL && enteredPassword === ADMIN_PASSWORD) {
+                    // On successful login, redirect to the main page or a dashboard.
+                    // Since we don't have a dashboard, we'll redirect to the landing page.
+                    // In a real app, this would be '/dashboard.html' or similar.
+                    window.location.href = 'C:/Users/tanma/Desktop/Physics -/'; // Redirects to the root/main page
+                } else {
+                    // Show an error message
+                    errorMessage.textContent = 'Invalid admin credentials.';
+                    // Optional: clear password field
+                    passwordInput.value = '';
+                }
+            });
+
+            // Clear the error message when user starts typing again
+            emailInput.addEventListener('input', () => {
+                errorMessage.textContent = '';
+            });
+            passwordInput.addEventListener('input', () => {
+                errorMessage.textContent = '';
+            });
+        });
+    </script>
+
+</body>
+</html>
+
